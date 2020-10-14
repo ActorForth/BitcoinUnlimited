@@ -455,7 +455,7 @@ public:
     CRegTestParams()
     {
         strNetworkID = "regtest";
-        consensus.nSubsidyHalvingInterval = 150;
+        consensus.nSubsidyHalvingInterval = 210000;
         consensus.BIP16Height = 0; // always enforce P2SH BIP16 on regtest
         consensus.BIP34Height = 1000; // BIP34 has activated on regtest (Used in rpc activation tests)
         consensus.BIP34Hash = uint256();
