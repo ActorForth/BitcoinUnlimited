@@ -11,7 +11,8 @@ GIT_REPO = "https://github.com/BitcoinUnlimited/{}.git".format(PROJECT_NAME)
 GIT_BRANCH = "v2.0.0"
 # When released put a hash here: "aa95d64d050c286356dadb78d19c2e687dec85cf"
 # When in development, put 'None' here
-EXPECT_HEAD = "7dc599c09bf2f7604e2bdd7ecf613381c77e3092"
+EXPECT_HEAD = None
+# EXPECT_HEAD = "7dc599c09bf2f7604e2bdd7ecf613381c77e3092"
 
 ROOT_DIR = os.path.realpath(
         os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
