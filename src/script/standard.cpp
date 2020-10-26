@@ -8,6 +8,7 @@
 
 #include "core_io.h" // freeze for debug only
 #include "pubkey.h"
+#include "script.h"
 #include "script/script.h"
 #include "util.h"
 #include "utilstrencodings.h"
@@ -40,6 +41,9 @@ const char *GetTxnOutputType(txnouttype t)
         return "publiclabel";
     case TX_NULL_DATA:
         return "nulldata";
+    case TX_CHECKDATASIG:
+        return "checkdatasig";
+        
     }
     return nullptr;
 }
@@ -78,6 +82,39 @@ static bool MatchPayToPubkeyHash(const CScript &script, valtype &pubkeyhash)
     }
     return false;
 }
+
+
+/** Check if a script is of the TX_CHECKDATASIG type
+ *
+ * param script const CScript& a reference to the script to evaluate
+ * param dataCarriage std::vector<valtype> a reference to vector containing
+ *                  3 elements:
+ *                    1) <msg> - Custom message to check the signature with OP_CHECKDATASIG against, size - custom
+ *                    2) <pubkey> - public key to check the signature with OP_CHECKDATASIG, size - 32 bytes
+ *                    3) <pubkeyhash> - hash of public key to check the signature with OP_CHECKSIG, size - CPubKey::PUBLIC_KEY_HASH160_SIZE
+ * return boolean
+ */
+static bool MatchPayToCheckDataSig(const CScript &script, std::vector<valtype> &dataCarriage)
+{
+
+    // Template: "<msg> << <pubkey> << OP_CHECKDATASIGVERIFY << OP_DUP << OP_HASH160 << OP_PUBKEYHASH << OP_EQUALVERIFY << OP_CHECKSIG"
+    //             ??        32b
+  
+    
+    // if (script[2] == OP_CHECKDATASIGVERIFY && script[3] == OP_DUP && script[4] == OP_HASH160 &&
+    //     script[5] == CPubKey::PUBLIC_KEY_HASH160_SIZE && script[23] == OP_EQUALVERIFY && script[24] == OP_CHECKSIG)
+    // {
+
+
+    //     // Assign the values to dataCarriage  here
+
+
+    //     return true;
+    // }
+    // return false;
+    return true;
+}
+
 
 /** Test for "small positive integer" script opcodes - OP_1 through OP_16. */
 static constexpr bool IsSmallInteger(opcodetype opcode) { return opcode >= OP_1 && opcode <= OP_16; }
@@ -279,6 +316,12 @@ bool Solver(const CScript &scriptPubKey, txnouttype &typeRet, std::vector<valtyp
         typeRet = TX_PUBKEYHASH;
         vSolutionsRet.push_back(std::move(data));
         return true;
+    }
+
+    if (MatchPayToCheckDataSig(scriptPubKey, vData)) {
+        typeRet = TX_CHECKDATASIG;
+        vSolutionsRet.push_back(std::move(data));
+	return true;
     }
 
     if (MatchFreezeCLTV(scriptPubKey, vData))

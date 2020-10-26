@@ -62,6 +62,7 @@ enum txnouttype
     TX_CLTV,
     TX_LABELPUBLIC,
     TX_NULL_DATA,
+    TX_CHECKDATASIG
 };
 
 class CNoDestination
