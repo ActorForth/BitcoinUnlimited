@@ -61,7 +61,7 @@ static bool MatchPayToPubkey(const CScript &script, valtype &pubkey)
     }
 
     if (script.size() == CPubKey::COMPRESSED_PUBLIC_KEY_SIZE + 2 && script[0] == CPubKey::COMPRESSED_PUBLIC_KEY_SIZE &&
-        script.back() == OP_CHECKSIG)
+        script.back() == OP_CHECKSIG) 
     {
         pubkey = valtype(script.begin() + 1, script.begin() + CPubKey::COMPRESSED_PUBLIC_KEY_SIZE + 1);
         return CPubKey::ValidSize(pubkey);
@@ -99,20 +99,24 @@ static bool MatchPayToCheckDataSig(const CScript &script, std::vector<valtype> &
 
     // Template: "<msg> << <pubkey> << OP_CHECKDATASIGVERIFY << OP_DUP << OP_HASH160 << OP_PUBKEYHASH << OP_EQUALVERIFY << OP_CHECKSIG"
     //             ??        32b
-  
-    
-    // if (script[2] == OP_CHECKDATASIGVERIFY && script[3] == OP_DUP && script[4] == OP_HASH160 &&
-    //     script[5] == CPubKey::PUBLIC_KEY_HASH160_SIZE && script[23] == OP_EQUALVERIFY && script[24] == OP_CHECKSIG)
-    // {
 
+    if (script.end()[-59] == 32 &&
+        script.end()[-26] == OP_CHECKDATASIGVERIFY &&
+	script.end()[-25] == OP_DUP &&
+	script.end()[-24] == OP_HASH160 &&
+	script.end()[-23] == CPubKey::PUBLIC_KEY_HASH160_SIZE &&        
+	script.end()[-2] == OP_EQUALVERIFY &&
+	script.end()[-1] == OP_CHECKSIG)
+    {
+      // std::string pubkey = std::string(script.end()[-58], script.end()[-27]);
+      // std::string pubkeyhash = std::string(script.end()[-22], script.end()[-3]);
+      // std::string msg = std::string(script.begin(), script.end()[-60]);
 
-    //     // Assign the values to dataCarriage  here
-
-
-    //     return true;
-    // }
-    // return false;
-    return true;
+      // dataCarriage.emplace_back();
+      return true;
+      
+    }
+    return false;
 }
 
 
